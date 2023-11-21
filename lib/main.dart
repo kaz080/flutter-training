@@ -32,12 +32,12 @@ class WeatherView extends StatefulWidget {
 class _WeatherViewState extends State<WeatherView> {
   final yumemiWeather = YumemiWeather();
 
-  WeatherType? _weatherType = null;
+  WeatherType? _weatherType;
 
   void _reload() {
     final weatherName = yumemiWeather.fetchSimpleWeather();
     final weatherType = WeatherType.fromName(weatherName);
-    print('Weather Condition: $weatherType');
+    //print('Weather Condition: $weatherType');
     setState(() {
       _weatherType = weatherType;
     });
