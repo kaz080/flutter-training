@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_training/utils.dart';
+import 'package:yumemi_weather/yumemi_weather.dart';
 
 void main() {
   runApp(const MainApp());
@@ -19,8 +22,26 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class WeatherView extends StatelessWidget {
+class WeatherView extends StatefulWidget {
   const WeatherView({super.key});
+
+  @override
+  State<WeatherView> createState() => _WeatherViewState();
+}
+
+class _WeatherViewState extends State<WeatherView> {
+  final yumemiWeather = YumemiWeather();
+
+  WeatherType? _weatherType;
+
+  void _reload() {
+    final weatherName = yumemiWeather.fetchSimpleWeather();
+    final weatherType = WeatherType.fromName(weatherName);
+    //print('Weather Condition: $weatherType');
+    setState(() {
+      _weatherType = weatherType;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +55,7 @@ class WeatherView extends StatelessWidget {
           child: SizedBox(
             width: width / 2,
             height: width / 2,
-            child: const Placeholder(),
+            child: _WeatherImage(type: _weatherType),
           ),
         ),
         Flexible(
@@ -84,7 +105,7 @@ class WeatherView extends StatelessWidget {
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: _reload,
                   child: const Text('Reload'),
                 ),
               ),
@@ -93,5 +114,22 @@ class WeatherView extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _WeatherImage extends StatelessWidget {
+  const _WeatherImage({
+    required this.type,
+  });
+
+  final WeatherType? type;
+
+  @override
+  Widget build(Object context) {
+    if (type != null) {
+      final name = type!.name;
+      return SvgPicture.asset('assets/$name.svg');
+    }
+    return const Placeholder();
   }
 }
